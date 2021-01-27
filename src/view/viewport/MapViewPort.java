@@ -25,15 +25,18 @@ import utility.Bounds;
  */
 public class MapViewPort implements ViewPort, Observer {
 
-    private final int TILE_WIDTH = 64, TILE_HEIGHT = 64;
+    private static final int TILE_WIDTH = 64;
+    private static final int TILE_HEIGHT = 64;
+
+    private static final double SCREEN_RATIO = 0.80;
 
     Tile[][] tiles;
 
     private ArrayList<Entity> entityList;
     private ArrayList<Projectile> projectileList;
 
-    int widthInTiles = 50;
-    int heightInTiles = 50;
+    int mapWidthInTiles = 50;
+    int mapHeightInTiles = 50;
     BufferedImage grass;
 
     public MapViewPort() {
@@ -46,43 +49,46 @@ public class MapViewPort implements ViewPort, Observer {
 
     @Override
     public void draw(Graphics g) {
-        //Calculate which portion of the map to draw based on avatar position.
-        int windowWidth = (int) (Director.getSize().width * 0.8);
-        int windowHeight = (int) (Director.getSize().height * 0.8);       
+        // Viewport Size (measured in pixels)
+        int w = (int) (Director.getSize().width * SCREEN_RATIO);
+        int h = (int) (Director.getSize().height * SCREEN_RATIO);       
+        // Viewport Size (measured in units of tiles)
+        int widthInTiles = ( w / TILE_WIDTH);
+        int heightInTiles = ( h / TILE_HEIGHT);
+        // Half of the Screen Size (measured in units of tiles)
+        int halfWidthInTiles = (widthInTiles / 2);
+        int halfHeightInTiles = (heightInTiles / 2);
+
+        // Start drawing the map from a position so that the Avatar is in the center
+        int startX = Avatar.getInstance().getLocation().x - halfWidthInTiles;
+        int startY = Avatar.getInstance().getLocation().y - halfHeightInTiles;
         
-        int windowWidthInTiles = ( windowWidth / TILE_WIDTH);
-        int windowHeightInTiles = ( windowHeight / TILE_HEIGHT);
+        // Clamp the camera so that the edge of the map is fixed to the edge of the screen
+        startX = clamp(startX, 0, mapWidthInTiles - widthInTiles);
+        startY = clamp(startY, 0, mapHeightInTiles - heightInTiles);
 
-        int startX = Avatar.getInstance().getLocation().x - windowWidthInTiles / 2;
-        int startY = Avatar.getInstance().getLocation().y - windowHeightInTiles / 2;
-
-        int finishX = Math.min(startX + windowWidthInTiles, widthInTiles);
-        int finishY =  Math.min(startY + windowHeightInTiles, heightInTiles);
-
-        clamp(startX, 0, widthInTiles - windowWidthInTiles);
-        clamp(startY, 0, heightInTiles - windowHeightInTiles);
+        int finishX = startX + widthInTiles;
+        int finishY =  startY + heightInTiles;
 
         //Start drawing
         for (int i = startX; i < finishX; i++) {
             for (int j = startY; j < finishY; j++) {
-                int tileX = (i - startX) * TILE_WIDTH; // The x coordinate located at the left of this tile
-                int tileY = (j - startY) * TILE_HEIGHT; // The y coordinate located at the top of this tile
-
-                drawCoordinates(g, i, j, startX, startY, tileX, tileY);
-                drawEntities(g, i, j, tileX, tileY);               
-                drawProjectile(g, i, j, tileX, tileY);
+                int xPos = (i - startX) * TILE_WIDTH; // The x coordinate located at the left of this tile
+                int yPos = (j - startY) * TILE_HEIGHT; // The y coordinate located at the top of this tile
+                drawCoordinates(g, i, j, xPos, yPos);
+                // Extra loops
+                drawEntities(g, i, j, xPos, yPos);               
+                drawProjectile(g, i, j, xPos, yPos);
             }
         }
-
-        // drawEntitiesEfficiently(g, new Bounds(startX, startY, finishX, finishY));
     }
 
     @Override
     public void update(Observable o, Object arg) {
         Object[] mapObjects = (Object[]) arg;
         tiles = (Tile[][]) mapObjects[0];
-        widthInTiles = tiles.length;
-        heightInTiles = tiles[0].length;
+        mapWidthInTiles = tiles.length;
+        mapHeightInTiles = tiles[0].length;
 
         ArrayList<Entity> e = (ArrayList<Entity>) mapObjects[1];
         entityList = e;
@@ -100,55 +106,33 @@ public class MapViewPort implements ViewPort, Observer {
      * @return
      */
     private int clamp(int value, int min, int max) {
-        if(min > max) throw new Error("min argument was greater than max argument");
+        if(min > max) throw new Error("min: " + min + " was greater than max: " + max);
         if(value < min ) return min;
         else if (value > max) return max;
         else return value;
     }
 
-    private void drawCoordinates(Graphics g, int i , int j, int startX, int startY, int tileX, int tileY) {
+    private void drawCoordinates(Graphics g, int tileX , int tileY, int xPos, int yPos) {
         g.setColor(Color.blue);
-        String coordinate = "(" + i + "," + j + ")";
-        int strX = tileX + TILE_WIDTH / 2 - g.getFontMetrics().stringWidth(coordinate) / 2;
-        int strY = tileY + TILE_HEIGHT / 2;
+        String coordinate = "(" + tileX + "," + tileY + ")";
+        String coordinate2 = "(" + xPos + "," + yPos + ")";
+        int strX = xPos + TILE_WIDTH / 2 - g.getFontMetrics().stringWidth(coordinate) / 2;
+        int strY = yPos + TILE_HEIGHT / 2;
         g.drawString(coordinate, strX, strY);
+        g.setColor(Color.LIGHT_GRAY);
+        g.drawString(coordinate2, strX, strY+10);
     }
 
-    private void drawEntities(Graphics g, int i, int j, int tileX, int tileY) {
+    private void drawEntities(Graphics g, int tileX, int tileY, int xPos, int yPos) {
         for (Entity e : entityList) {
-            boolean entityIsHere = e.getLocation().equals(new Point(i, j));
+            boolean entityIsHere = e.getLocation().equals(new Point(tileX, tileY));
             if (entityIsHere) {
                 Image entityImg = e.getSprite();
-                g.drawImage(entityImg, tileX, tileY, null);
+                g.drawImage(entityImg, xPos, yPos, null);
 
                 boolean notAvatar = !e.equals(Avatar.getInstance());
                 if (notAvatar) {
-                    drawHealthBar(e, g, tileX, tileY);
-                }
-            }
-        }
-    }
-
-    private void drawEntitiesEfficiently(Graphics g, Bounds bound) {
-        int windowWidth = (int) (Director.getSize().width * 0.8);
-        int windowHeight = (int) (Director.getSize().height * 0.8);       
-        int windowWidthInTiles = ( windowWidth / TILE_WIDTH);
-        int windowHeightInTiles = ( windowHeight / TILE_HEIGHT);
-        int startX = Avatar.getInstance().getLocation().x - windowWidthInTiles / 2;
-        int startY = Avatar.getInstance().getLocation().y - windowHeightInTiles / 2;
-        for (Entity e : entityList) {
-            boolean entityIsInFrame = bound.containsPoint(e.getLocation());
-            if (entityIsInFrame) {
-                int tileX = (e.getLocation().x - startX) * TILE_WIDTH; // The x coordinate located at the left of this tile
-                int tileY = (e.getLocation().y - startY) * TILE_HEIGHT; // The y coordinate located at the top of this tile
-
-
-                Image entityImg = e.getSprite();
-                g.drawImage(entityImg, tileX, tileY, null);
-
-                boolean notAvatar = !e.equals(Avatar.getInstance());
-                if (notAvatar) {
-                    drawHealthBar(e, g, tileX, tileY);
+                    drawHealthBar(e, g, xPos, yPos);
                 }
             }
         }
