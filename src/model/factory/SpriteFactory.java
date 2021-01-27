@@ -10,7 +10,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 /**
- *
+ * A sprite factory should be able to turn sprite IDs into spritepaths 
  * @author ChrisMoscoso
  */
 public class SpriteFactory {

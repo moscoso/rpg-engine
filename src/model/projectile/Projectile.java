@@ -5,10 +5,8 @@ import model.entity.Avatar;
 import model.entity.Entity;
 import model.game_object.GameObject;
 import model.map.Direction;
-import model.util.gameTimer.GameTimer;
-import model.util.gameTimer.GameTimerListener;
-
-import java.awt.Point;
+import model.game_timer.GameTimer;
+import model.game_timer.GameTimerListener;
 
 /**
  *

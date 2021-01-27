@@ -32,8 +32,8 @@ public class MapViewPort implements ViewPort, Observer {
     private ArrayList<Entity> entityList;
     private ArrayList<Projectile> projectileList;
 
-    int widthInTiles = 0;
-    int heightInTiles = 0;
+    int widthInTiles = 50;
+    int heightInTiles = 50;
     BufferedImage grass;
 
     public MapViewPort() {

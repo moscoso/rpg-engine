@@ -12,8 +12,9 @@ import model.factory.SpriteFactory;
 import model.game_object.GameObject;
 import model.map.Direction;
 import model.stats.PlayerStats;
-import model.util.gameTimer.GameTimer;
-import model.util.gameTimer.GameTimerListener;
+import model.game_timer.GameTimer;
+import model.game_timer.GameTimerListener;
+
 
 /**
  * The class Entity defines a common type for all entities (beings) in the game.

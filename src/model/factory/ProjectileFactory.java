@@ -6,7 +6,7 @@ import model.map.Direction;
 import model.projectile.Projectile;
 
 /**
- *
+ * A projectile factory should be able to turn projectileIDs into projectiles
  * @author ChrisMoscoso
  */
 public class ProjectileFactory {

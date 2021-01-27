@@ -4,7 +4,8 @@ import java.awt.Graphics;
 
 /**
  * A viewport is a collection of graphical objects that represent a portion of
- * the game.
+ * the game. Think of a Viewport as a screen onto which the game is projected.
+ * Viewports can be added to the scene so that there are multiple surfaces to draw on.
  *
  * @author ChrisMoscoso
  */

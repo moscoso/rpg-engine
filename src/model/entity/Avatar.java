@@ -6,8 +6,8 @@ import java.util.Observer;
 import model.combat.Combat;
 import model.factory.ProjectileFactory;
 import model.factory.SpriteFactory;
-import model.util.gameTimer.GameTimer;
-import model.util.gameTimer.GameTimerListener;
+import model.game_timer.GameTimer;
+import model.game_timer.GameTimerListener;
 
 /**
  *

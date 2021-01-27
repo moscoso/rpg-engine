@@ -13,6 +13,7 @@ import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+
 import model.director.Director;
 import view.scene.Scene;
 
@@ -160,13 +161,11 @@ public class GameWindow {
         public void windowIconified(WindowEvent e) {Director.pauseGame();}
 
         @Override
-        public void windowDeiconified(WindowEvent e) {
-            //Do nothing
-        }
+        public void windowDeiconified(WindowEvent e) { Director.resumeGame(); }
 
         @Override
-        public void windowActivated(WindowEvent e) {
-            //Do nothing
+        public void windowActivated(WindowEvent e) { 
+            // Director.resumeGame();
         }
 
         @Override

@@ -4,8 +4,9 @@ package model.entity;
 
 import model.factory.SpriteFactory;
 import model.map.Direction;
-import model.util.gameTimer.GameTimer;
-import model.util.gameTimer.GameTimerListener;
+import model.game_timer.GameTimer;
+import model.game_timer.GameTimerListener;
+
 
 /**
  *

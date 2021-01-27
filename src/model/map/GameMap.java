@@ -12,14 +12,10 @@ import model.map.tile.Tile;
 import model.projectile.Projectile;
 
 /**
- * This is a container of all the entities, items, tiles, and traps. Currently,
- * of the four types of objects on the map only one object per type can occupy a
- * map. For example, there may be an entity and a trap on one tile, but there
- * are not two entities on one tile nor traps, nor items, etc.
+ * Each game map represents the space that the player travels through.
+ * It is a container that groups all the game objects and tiles,
+ * into a single world.
  *
- * This GameMap extends Observable because it will be observed by the view. When
- * the map hasChanged it will only disclose essential, non-private information
- * to any observers currently observing the map.
  *
  * @author Hanif, ChrisMoscoso, Jason Owens
  */

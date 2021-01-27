@@ -4,8 +4,9 @@ package model.entity;
 import java.util.Random;
 
 import model.factory.SpriteFactory;
-import model.util.gameTimer.GameTimer;
-import model.util.gameTimer.GameTimerListener;
+import model.game_timer.GameTimer;
+import model.game_timer.GameTimerListener;
+
 
 /**
  *

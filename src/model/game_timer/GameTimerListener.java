@@ -1,4 +1,4 @@
-package model.util.gameTimer;
+package model.game_timer;
 
 /**
  * The interface for a GameTimerListener acts as a container for a Trigger function that is to 

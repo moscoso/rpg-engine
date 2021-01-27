@@ -9,7 +9,10 @@ import model.game_object.GameObject;
  *
  * @author ChrisMoscoso
  */
-public class Terrain extends GameObject {
+public class Terrain {
+
+    GameObject object;
+    // Collision collision;
 
     public enum MotionType {
         ALL_PASS,

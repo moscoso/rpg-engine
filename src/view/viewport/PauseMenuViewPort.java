@@ -23,7 +23,7 @@ import model.menu.Menu;
 public class PauseMenuViewPort implements ViewPort, Observer {
 
     //Model Variables
-    private String[] options;
+    private String[] options = {};
     private int activeOptionIndex;
     private boolean isVisible;
     //Drawing variables
@@ -60,19 +60,19 @@ public class PauseMenuViewPort implements ViewPort, Observer {
 
             /*DRAW MENU*/
             g.setFont(new Font(g.getFont().getFamily(), Font.PLAIN, 30));
-            if (options != null) {
-                for (int i = 0; i < options.length; i++) {
-                    if (i == activeOptionIndex) {
-                        g.setColor(Color.red);
-                    } else {
-                        g.setColor(Color.black);
-                    }
-                    int stringWidth = g.getFontMetrics().stringWidth(options[i]);
-                    int stringHeight = g.getFontMetrics().getHeight();
-                    int padding = 25;
-                    g.drawString(options[i], (width / 2) - (stringWidth / 2), i * (stringHeight + padding) + logoY + logoHeight + stringHeight + padding);
+            
+            for (int i = 0; i < options.length; i++) {
+                if (i == activeOptionIndex) {
+                    g.setColor(Color.red);
+                } else {
+                    g.setColor(Color.black);
                 }
+                int stringWidth = g.getFontMetrics().stringWidth(options[i]);
+                int stringHeight = g.getFontMetrics().getHeight();
+                int padding = 25;
+                g.drawString(options[i], (width / 2) - (stringWidth / 2), i * (stringHeight + padding) + logoY + logoHeight + stringHeight + padding);
             }
+            
         }
     }
 

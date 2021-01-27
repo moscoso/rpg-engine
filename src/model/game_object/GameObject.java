@@ -4,16 +4,17 @@ import java.awt.Image;
 import java.awt.Point;
 import model.factory.SpriteFactory;
 
+/**
+ * A GameObject is a container for a name, description, sprite, and location
+ */
 public class GameObject {
 
     private final String name;
     private final String description;
     private String spritePath = null;
 
-    //Added this, necessary to save game state. 
     private Point location;
 
-    //This constructor should be called only after the subclass constructor is called
     public GameObject() {
         name = "Generic Object";
         description = "Generic description";
