@@ -1,6 +1,5 @@
 package model.entity;
 
-import java.awt.Point;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.TreeMap;
