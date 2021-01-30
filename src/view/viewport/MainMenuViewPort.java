@@ -34,9 +34,9 @@ public class MainMenuViewPort implements ViewPort, Observer {
     BufferedImage fbLogo;
     
     public MainMenuViewPort(){
-        imageIcon = new ImageIcon("src/resources/img/bg.gif");
+        imageIcon = new ImageIcon("resources/img/bg.gif");
         try {
-            fbLogo = ImageIO.read(new File("src/resources/img/FinalBoss.png"));          
+            fbLogo = ImageIO.read(new File("resources/img/FinalBoss.png"));          
         } catch (IOException ex) {
             logoHeight = 0;
         }
