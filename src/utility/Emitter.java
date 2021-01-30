@@ -1,4 +1,4 @@
-package model.utility;
+package utility;
 
 import java.util.ArrayList;
 import java.util.concurrent.Flow.Publisher;
