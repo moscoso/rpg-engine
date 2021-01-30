@@ -2,12 +2,9 @@
 package model.combat;
 
 import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
-import java.util.Iterator;
 import java.util.List;
 
 import model.cartographer.Cartographer;
-import model.entity.Avatar;
 import model.entity.Entity;
 import model.projectile.Projectile;
 import model.stats.PlayerStats;
@@ -44,14 +41,5 @@ public class Combat {
                 }
             }
         }
-    }
-    
-    private void applySummonerDamage(Entity attacker, Entity defender){
-        PlayerStats attackerStats = attacker.getPlayerStats();
-        PlayerStats defenderStats = defender.getPlayerStats();
-        int damageGiven = attackerStats.getOffense() * attackerStats.getIntellect();        
-        int damageReceived = damageGiven - defenderStats.getDefense();
-        defenderStats.modCurrentHealth(-damageReceived);
-    }
-    
+    }    
 }

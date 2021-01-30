@@ -13,8 +13,8 @@ import java.util.Observer;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
-import model.director.Director;
 import model.menu.Menu;
+import view.window.GameWindow;
 
 /**
  * The MainMenuViewPort draws the main menu
@@ -44,8 +44,8 @@ public class MainMenuViewPort implements ViewPort, Observer {
 
     @Override
     public void draw(Graphics g) {
-        width = Director.getSize().width;
-        height = Director.getSize().height;
+        width = GameWindow.getSize().width;
+        height = GameWindow.getSize().height;
 
         drawBackground(g);
         drawLogo(g);

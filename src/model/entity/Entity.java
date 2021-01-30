@@ -12,6 +12,7 @@ import model.factory.SpriteFactory;
 import model.game_object.GameObject;
 import model.map.Direction;
 import model.stats.PlayerStats;
+import model.vector.Vector2;
 import model.game_timer.GameTimer;
 import model.game_timer.GameTimerListener;
 
@@ -30,9 +31,6 @@ public class Entity extends GameObject implements Observer {
     protected PlayerStats myStats;
 
     protected boolean canMove = true;
-    protected boolean moveHasBeenCommanded = false;
-
-    protected Point location;
 
     private int isMovingY;
     private int isMovingX;
@@ -43,7 +41,6 @@ public class Entity extends GameObject implements Observer {
 
     public Entity() {
         myDirection = Direction.SOUTH;
-        location = new Point(1, 1);
         myStats = new PlayerStats();
         myStats.addObserver(this);
     }
@@ -96,7 +93,7 @@ public class Entity extends GameObject implements Observer {
      * move in the x direction. If 0, the player will not move in the x
      * direction.
      */
-    public void isMovingX(Boolean b) {
+    public void isMovingX(boolean b) {
         isMovingX = b ? 1 : 0;
     }
 
@@ -109,7 +106,7 @@ public class Entity extends GameObject implements Observer {
      * move in the y direction. If 0, the player will not move in the y
      * direction.
      */
-    public void isMovingY(Boolean b) {
+    public void isMovingY(boolean b) {
         isMovingY = b ? 1 : 0;
     }
 
@@ -118,34 +115,15 @@ public class Entity extends GameObject implements Observer {
     }
 
     /**
-     * Get the location of the entity.
-     *
-     * @return the location of the entity as a point (unit is tiles)
-     */
-    @Override
-    public Point getLocation() {
-        return location;
-    }
-
-    /**
-     * Sets the location of the entity on the map
-     *
-     * @param x the x coordinate of the location
-     * @param y the y coordinate of the location
-     */
-    public void setLocation(int x, int y) {
-        location = new Point(x, y);
-    }
-
-    /**
      * Changes the entity's location by translating the position by the
      * velocity.
      */
     public void move() {
-        if (canMove && moveHasBeenCommanded) {
-            location.translate(isMovingX * myDirection.dx, isMovingY * myDirection.dy);
+        if (canMove) {
+            Vector2 position = this.getTransform().getPosition();
+            position.x += isMovingX * myDirection.dx;
+            position.y += isMovingY * myDirection.dy;
             canMove = false;
-            moveHasBeenCommanded = false;
             GameTimer x = new GameTimer(this.myStats.getSpeed());
             x.setGameTimerListener(new GameTimerListener() {
 
@@ -170,21 +148,6 @@ public class Entity extends GameObject implements Observer {
         if (myStats.getCurrentMana() < myStats.getMaxMana() && canRegenMana) {
             this.regenerateMana();
         }
-    }
-
-    public boolean moveHasBeenCommanded() {
-        return moveHasBeenCommanded;
-    }
-
-    private void setMoveHasBeenCommanded(boolean moveHasBeenCommanded) {
-        this.moveHasBeenCommanded = moveHasBeenCommanded;
-    }
-
-    /**
-     * Public method to set move has been commanded.
-     */
-    public void setMoveHasBeenCommanded() {
-        setMoveHasBeenCommanded(true);
     }
 
     @Override

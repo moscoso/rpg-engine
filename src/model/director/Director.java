@@ -1,27 +1,14 @@
 package model.director;
 
-import controller.AvatarKeyController;
-import controller.MenuKeyController;
-import model.menu.Menu;
-import java.awt.Dimension;
-import java.awt.image.BufferedImage;
 import java.util.Observable;
-import java.util.Random;
 
 import model.cartographer.Cartographer;
-import model.entity.Avatar;
-import model.entity.Entity;
-import model.entity.RandomAIEntity;
-import model.entity.WalkInLoopAIEntity;
+
 import model.map.GameMap;
-import model.menu.Menu.MenuOption;
 import view.window.GameWindow;
+import view.scene.GameScene;
+import view.scene.MenuScene;
 import view.scene.Scene;
-import view.viewport.MainMenuViewPort;
-import view.viewport.MapViewPort;
-import view.viewport.MiniMapViewPort;
-import view.viewport.PauseMenuViewPort;
-import view.viewport.StatusViewPort;
 
 /**
  * The Game Director oversees the integration of the game's various subsystems.
@@ -33,23 +20,19 @@ import view.viewport.StatusViewPort;
 public class Director extends Observable {
     private static Director instance;
 
-    private static Boolean paused = false;
-    private static GameWindow window = new GameWindow();;
-    private static Scene menuScene, gameScene;
+    private static MenuScene menuScene = new MenuScene();
+    private static GameScene gameScene = new GameScene();
     private static Scene activeScene;
 
-    private static Menu mainMenu, pauseMenu;
 
-    private static MenuKeyController mainMenuKC, pauseMenuKC;
-    private static AvatarKeyController avatarKC;
-
-    private static GameMap activeMap = Cartographer.getActiveMap();
-
-    private static Random random = new Random();
+    /**
+     * This flag determines whether the game should update every frame or not
+     */
+    private static Boolean paused = false;
 
     private Director() {
-        Scene.setSceneSize(window.getSize());
-        startMenuScene();
+        Scene.setSceneSize(GameWindow.getSize());
+        setActiveScene(menuScene);
     }
 
     /**
@@ -63,81 +46,6 @@ public class Director extends Observable {
         return instance;
     }
 
-    /**
-     * This sets up the main menu scene
-     */
-    public static void startMenuScene() {
-        mainMenu = new Menu();
-        menuScene = new Scene();
-
-        MainMenuViewPort menuVP = new MainMenuViewPort();
-        menuScene.addViewPort(menuVP);
-
-        //Add observers to model object
-        mainMenu.addObserver(menuVP);
-
-        //Add controllers to the window
-        mainMenuKC = new MenuKeyController(mainMenu, menuScene);
-        window.addKeyController(mainMenuKC);
-
-        activeScene = menuScene;
-    }
-
-    /**
-     * This starts a new game programmatically.
-     */
-    public static void startNewGame() {
-        //Create Game Scene
-        gameScene = new Scene();
-
-        GameMap activeMap = Cartographer.getActiveMap();
-
-        activeMap.addEntity(Avatar.getInstance());
-
-        for(int i = 0 ; i < 50; i++) {
-            Entity e = new RandomAIEntity();
-            activeMap.addEntity(e);
-            int randomX = random.nextInt(50);
-            int randomY = random.nextInt(50);
-            e.setLocation(randomX, randomY);
-        }   
-
-
-        //Create Pause Menu 
-        MenuOption[] pauseMenuOptions = {MenuOption.RESUME_GAME, MenuOption.SAVE_GAME, MenuOption.RETURN_TO_MAIN_MENU};
-        pauseMenu = new Menu(pauseMenuOptions);
-        paused = false;
-        pauseMenu.hide();
-
-        //Create Viewports
-        MapViewPort mapVP = new MapViewPort();
-        MiniMapViewPort miniMapVP = new MiniMapViewPort();
-        PauseMenuViewPort pauseVP = new PauseMenuViewPort();
-        StatusViewPort statusVP = new StatusViewPort();
-
-        //Add viewports to scene
-        gameScene.addViewPort(mapVP);
-        gameScene.addViewPort(pauseVP);
-        gameScene.addViewPort(statusVP);
-        gameScene.addViewPort(miniMapVP);
-
-        //Add viewports as observers to model objects.
-        activeMap.addObserver(mapVP);
-        activeMap.addObserver(miniMapVP);
-        pauseMenu.addObserver(pauseVP);
-        Avatar.getInstance().addObserverOfStats(statusVP);
-
-        //Add controllers to window
-        pauseMenuKC = new MenuKeyController(pauseMenu, gameScene);
-        window.addKeyController(pauseMenuKC);
-        avatarKC = new AvatarKeyController();
-        window.addKeyController(avatarKC);
-        
-
-        //Set game scene as active scene
-        activeScene = gameScene;
-
-    }
 
     /**
      * This is where execution of the game logic and updating of the model takes
@@ -145,16 +53,11 @@ public class Director extends Observable {
      */
     public void updateGame() {
         if (gameIsRunning()) {
-            //The game is runnning
             tick();
-            if (activeMap != null) {
-                activeMap.moveGameObjects();
-                activeMap.regenerateEntities();
-                activeMap.checkProjectiles();
-            }
-
-        } else {
-            //Some menu is active
+            GameMap activeMap = Cartographer.getActiveMap();
+            activeMap.moveGameObjects();
+            activeMap.regenerateEntities();
+            activeMap.checkProjectiles();
         }
     }
 
@@ -175,32 +78,11 @@ public class Director extends Observable {
     }
 
     /**
-     * Uses a double buffering technique to paint the image to the screen. First
-     * it renders the game to a bufferedImage. Then, it takes the bufferedImage
-     * and paints it to the screen.
-     */
-    public static void drawGame() {
-        BufferedImage gameImage = activeScene.getImage();//render the game to buffer
-        window.paintImageToScreen(gameImage); //paint the buffer to screen
-    }
-
-    /**
-     * This returns the dimensions of the game window in pixels
-     *
-     * @return the dimensions of the game window in pixels
-     */
-    public static Dimension getSize() {
-        return window.getSize();
-    }
-
-    /**
      * Pauses game play only. Menus will still work.
      */
     public static void pauseGame() {
         paused = true;
-        if (pauseMenu != null) {
-            pauseMenu.show();
-        }
+        gameScene.showPauseMenu();
     }
 
     /**
@@ -208,9 +90,7 @@ public class Director extends Observable {
      */
     public static void resumeGame() {
         paused = false;
-        if (pauseMenu != null) {
-            pauseMenu.hide();
-        }
+        gameScene.hidePauseMenu();
     }
 
     /**
@@ -235,9 +115,17 @@ public class Director extends Observable {
     /**
      * Sets the main menu scene to be active.
      */
-    public static void returnToMainMenu() {
+    public static void goToMainMenu() {
         setActiveScene(menuScene);
     }
+
+    /**
+     * Sets the Game scene to be active.
+     */
+    public static void goToGame() {
+        setActiveScene(gameScene);
+    }
+
 
     /**
      * Ticks all observing game timers.

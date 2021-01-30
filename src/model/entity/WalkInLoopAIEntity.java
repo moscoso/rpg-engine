@@ -1,9 +1,9 @@
 
 package model.entity;
 
-
 import model.factory.SpriteFactory;
 import model.map.Direction;
+import model.vector.Vector2;
 import model.game_timer.GameTimer;
 import model.game_timer.GameTimerListener;
 
@@ -36,7 +36,11 @@ public class WalkInLoopAIEntity extends Entity {
     @Override
     public void move(){
         if(canMove){
-            location.translate(path[currentStep % path.length].dx, path[currentStep % path.length].dy);
+            Vector2 position = this.getTransform().getPosition();
+            int nextX = path[currentStep % path.length].dx;
+            int nextY = path[currentStep % path.length].dy;
+            position.x += nextX;
+            position.y += nextY;
             currentStep++;
             canMove = false;
             GameTimer movement = new GameTimer(myStats.getSpeed());

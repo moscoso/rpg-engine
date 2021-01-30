@@ -3,7 +3,6 @@ package view.viewport;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -12,12 +11,12 @@ import java.util.ConcurrentModificationException;
 import java.util.Observable;
 import java.util.Observer;
 import javax.imageio.ImageIO;
-import model.director.Director;
 import model.entity.Avatar;
 import model.entity.Entity;
-import model.map.tile.Tile;
+import model.tile.Tile;
 import model.projectile.Projectile;
-import utility.Bounds;
+import model.vector.Vector2;
+import view.window.GameWindow;
 
 /**
  *
@@ -50,8 +49,8 @@ public class MapViewPort implements ViewPort, Observer {
     @Override
     public void draw(Graphics g) {
         // Viewport Size (measured in pixels)
-        int w = (int) (Director.getSize().width * SCREEN_RATIO);
-        int h = (int) (Director.getSize().height * SCREEN_RATIO);       
+        int w = (int) (GameWindow.getSize().width * SCREEN_RATIO);
+        int h = (int) (GameWindow.getSize().height * SCREEN_RATIO);       
         // Viewport Size (measured in units of tiles)
         int widthInTiles = ( w / TILE_WIDTH);
         int heightInTiles = ( h / TILE_HEIGHT);
@@ -59,13 +58,15 @@ public class MapViewPort implements ViewPort, Observer {
         int halfWidthInTiles = (widthInTiles / 2);
         int halfHeightInTiles = (heightInTiles / 2);
 
+        Vector2 avatarPosition = Avatar.getInstance().getTransform().getPosition();
+
         // Start drawing the map from a position so that the Avatar is in the center
-        int startX = Avatar.getInstance().getLocation().x - halfWidthInTiles;
-        int startY = Avatar.getInstance().getLocation().y - halfHeightInTiles;
+        int startX = ((int) (avatarPosition.x)) - halfWidthInTiles;
+        int startY = ((int) (avatarPosition.y)) - halfHeightInTiles;
         
         // Clamp the camera so that the edge of the map is fixed to the edge of the screen
-        startX = clamp(startX, 0, mapWidthInTiles - widthInTiles);
-        startY = clamp(startY, 0, mapHeightInTiles - heightInTiles);
+        // startX = clamp(startX, 0, mapWidthInTiles - widthInTiles);
+        // startY = clamp(startY, 0, mapHeightInTiles - heightInTiles);
 
         int finishX = startX + widthInTiles;
         int finishY =  startY + heightInTiles;
@@ -75,7 +76,8 @@ public class MapViewPort implements ViewPort, Observer {
             for (int j = startY; j < finishY; j++) {
                 int xPos = (i - startX) * TILE_WIDTH; // The x coordinate located at the left of this tile
                 int yPos = (j - startY) * TILE_HEIGHT; // The y coordinate located at the top of this tile
-                drawCoordinates(g, i, j, xPos, yPos);
+                drawTerrain(g, i, j, xPos, yPos);
+                // drawCoordinates(g, i, j, xPos, yPos);
                 // Extra loops
                 drawEntities(g, i, j, xPos, yPos);               
                 drawProjectile(g, i, j, xPos, yPos);
@@ -98,18 +100,14 @@ public class MapViewPort implements ViewPort, Observer {
 
     }
 
-    /**
-     * Clamps a value between an upper and lower bound
-     * @param value the value to ass
-     * @param min the minimum value is the smallest (most negative) value. This is the lower bound in the range of allowed values
-     * @param max The maximum value is the largest (most positive) expression value to which the value of the property will be assigned
-     * @return
-     */
-    private int clamp(int value, int min, int max) {
-        if(min > max) throw new Error("min: " + min + " was greater than max: " + max);
-        if(value < min ) return min;
-        else if (value > max) return max;
-        else return value;
+    private void drawTerrain(Graphics g, int tileX , int tileY, int xPos, int yPos) {
+        boolean inBounds = tileX >= 0 && tileX <= mapWidthInTiles && tileY >= 0 && tileY <= mapHeightInTiles;
+        if(inBounds){
+            g.setColor(Color.white);
+        } else {
+            g.setColor(Color.black);
+        }
+        g.fillRect(xPos, yPos, TILE_WIDTH, TILE_HEIGHT);
     }
 
     private void drawCoordinates(Graphics g, int tileX , int tileY, int xPos, int yPos) {
@@ -125,7 +123,7 @@ public class MapViewPort implements ViewPort, Observer {
 
     private void drawEntities(Graphics g, int tileX, int tileY, int xPos, int yPos) {
         for (Entity e : entityList) {
-            boolean entityIsHere = e.getLocation().equals(new Point(tileX, tileY));
+            boolean entityIsHere = e.getTransform().getPosition().isEqualTo((new Vector2(tileX, tileY)));
             if (entityIsHere) {
                 Image entityImg = e.getSprite();
                 g.drawImage(entityImg, xPos, yPos, null);
@@ -141,7 +139,8 @@ public class MapViewPort implements ViewPort, Observer {
     private void drawProjectile(Graphics g, int i, int j, int tileX, int tileY) {
         try {
             for (Projectile p : projectileList) {
-                if (p.getLocation().equals(new Point(i, j))) {
+                boolean projectileIsHere = p.getTransform().getPosition().isEqualTo(new Vector2(i,j));
+                if (projectileIsHere) {
                     Image entityImg = p.getSprite();
                     g.drawImage(entityImg, tileX, tileY, null);
                 }

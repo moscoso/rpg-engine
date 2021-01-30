@@ -6,6 +6,7 @@ import java.util.Random;
 import model.factory.SpriteFactory;
 import model.game_timer.GameTimer;
 import model.game_timer.GameTimerListener;
+import model.vector.Vector2;
 
 
 /**
@@ -27,8 +28,9 @@ public class RandomAIEntity extends Entity {
         if(canMove){
             int rx = random.nextInt(3) - 1;
             int ry = random.nextInt(3) - 1;
-            
-            location.translate(rx, ry);
+            Vector2 position = this.getTransform().getPosition();
+            position.x += rx;
+            position.y += ry;
             canMove = false;
             GameTimer movement = new GameTimer(myStats.getSpeed());
             movement.setGameTimerListener(new GameTimerListener(){

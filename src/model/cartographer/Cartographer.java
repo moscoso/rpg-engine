@@ -3,7 +3,7 @@ package model.cartographer;
 import model.map.GameMap;
 
 /**
- * Maintains a list of all the different game maps and keeps track of the
+ * Maintains a list of all the different game maps of the overworld and keeps track of the
  * current active map. It provides map info to external systems.
  */
 public class Cartographer {

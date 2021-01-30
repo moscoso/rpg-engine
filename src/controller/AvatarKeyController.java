@@ -5,6 +5,7 @@ import java.awt.event.KeyListener;
 import model.director.Director;
 import model.entity.Avatar;
 import model.map.Direction;
+import view.scene.Scene;
 
 /**
  *
@@ -12,10 +13,11 @@ import model.map.Direction;
  */
 public class AvatarKeyController implements KeyListener {
 
-    Avatar avatar;
+    Avatar avatar = Avatar.getInstance();
+    Scene scene; 
 
-    public AvatarKeyController() {
-        avatar = model.entity.Avatar.getInstance();
+    public AvatarKeyController(Scene s) {
+        scene = s;
     }
 
     @Override
@@ -25,7 +27,7 @@ public class AvatarKeyController implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if (Director.gameIsRunning()) {
+        if (Director.gameIsRunning() && Director.getActiveScene().equals(scene)) {
             
             movePlayer(e);
 
@@ -64,20 +66,16 @@ public class AvatarKeyController implements KeyListener {
         if (e.getKeyCode() == KeyEvent.VK_UP) {
             avatar.setDirection(Direction.NORTH);
             avatar.isMovingY(true);
-            avatar.setMoveHasBeenCommanded();
         } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
             avatar.setDirection(Direction.EAST);
             avatar.isMovingX(true);
-            avatar.setMoveHasBeenCommanded();
         } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
             avatar.setDirection(Direction.WEST);
             avatar.isMovingX(true);
-            avatar.setMoveHasBeenCommanded();
 
         } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
             avatar.setDirection(Direction.SOUTH);
             avatar.isMovingY(true);
-            avatar.setMoveHasBeenCommanded();
         }
     }
 

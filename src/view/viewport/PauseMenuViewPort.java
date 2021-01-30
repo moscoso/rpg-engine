@@ -14,6 +14,7 @@ import javax.swing.ImageIcon;
 
 import model.director.Director;
 import model.menu.Menu;
+import view.window.GameWindow;
 
 /**
  * The MainMenuViewPort draws the main menu
@@ -46,9 +47,9 @@ public class PauseMenuViewPort implements ViewPort, Observer {
     @Override
     public void draw(Graphics g) {
         if(isVisible){
-            if (Director.getSize() != null) {
-                width = Director.getSize().width;
-                height = Director.getSize().height;
+            if (GameWindow.getSize() != null) {
+                width = GameWindow.getSize().width;
+                height = GameWindow.getSize().height;
             }
             /*DRAW SEMI TRANSPARENT BG*/
             g.setColor(new Color(255, 255, 255, 100));

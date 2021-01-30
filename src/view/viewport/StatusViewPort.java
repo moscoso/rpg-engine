@@ -5,8 +5,8 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.util.Observable;
 import java.util.Observer;
-import model.director.Director;
 import model.stats.PlayerStats;
+import view.window.GameWindow;
 
 /**
  *
@@ -16,62 +16,52 @@ public class StatusViewPort implements ViewPort, Observer {
 
     private PlayerStats stats = new PlayerStats();
     
-    private int width, height;
+    private int width;
+    private int height;
 
     @Override
     public void draw(Graphics g) {
-        width = Director.getSize().width;
-        height = Director.getSize().height;
+        width = GameWindow.getSize().width;
+        height = GameWindow.getSize().height;
+        drawHealth(g);
+        drawMana(g);
+    }
+
+    public void drawHealth(Graphics g) {
+        int healthBarXMargin = (int) (width * 0.20);
+        int healthBarYMargin = height - 135;
+        int healthBarWidth = width - (healthBarXMargin * 2);
+        int healthBarHeight = 25;
         
-        /*g.setColor(Color.blue);
-         g.fillRect(0, height - 100, width, 100);
-         g.setColor(Color.black);
-         g.setFont(new Font("TimesRoman", Font.PLAIN, 20));
-         g.setColor(Color.black);
-         g.drawString("STATUS VIEWPORT", width/2 - 85, height - 50);*/
+        double percentageOfHealthRemaining = (double) stats.getCurrentHealth() / (double) stats.getMaxMana();
+        g.setColor(Color.LIGHT_GRAY);
+        g.fillRoundRect(healthBarXMargin , healthBarYMargin, healthBarWidth, healthBarHeight, 25, 25);
+        
+        g.setColor(Color.GREEN);
+        g.fillRoundRect(healthBarXMargin, healthBarYMargin, (int) (healthBarWidth * percentageOfHealthRemaining), healthBarHeight, 25, 25);
+        
+        String health = stats.getCurrentHealth() + "/" + stats.getMaxHealth();
+        g.setColor(Color.BLACK);
+        g.drawString(health, healthBarWidth/2 + healthBarXMargin + g.getFontMetrics().stringWidth(health ) /2, healthBarYMargin + g.getFontMetrics().getHeight());
+    }
 
-        if (stats != null) {
-
-            int healthBarXMargin = (int) (width * 0.20);
-            int healthBarYMargin = height - 135;
-            int healthBarWidth = width - (healthBarXMargin * 2);
-            int healthBarHeight = 25;
-            
-            double percentageOfHealthRemaining = (double) stats.getCurrentHealth() / (double) stats.getMaxMana();
-            
-            //Health bar
-            g.setColor(Color.LIGHT_GRAY);
-            g.fillRoundRect(healthBarXMargin , healthBarYMargin, healthBarWidth, healthBarHeight, 25, 25);
-            
-            g.setColor(Color.GREEN);
-            g.fillRoundRect(healthBarXMargin, healthBarYMargin, (int) (healthBarWidth * percentageOfHealthRemaining), healthBarHeight, 25, 25);
-            
-            String health = stats.getCurrentHealth() + "/" + stats.getMaxHealth();
-            g.setColor(Color.BLACK);
-            g.drawString(health, healthBarWidth/2 + healthBarXMargin + g.getFontMetrics().stringWidth(health ) /2, healthBarYMargin + g.getFontMetrics().getHeight());
-            
-            drawUglyStats(g);
-            
-            //Mana bar
-            int manaBarXMargin = (int) (width * 0.25);
-            int manaBarWidth = width - (manaBarXMargin * 2);
-            int manaBarYMargin = healthBarYMargin + healthBarHeight;
-            int manaBarHeight = 25;
-            
-            double percentageOfManaRemaining = (double) stats.getCurrentMana() / (double) stats.getMaxHealth();
-            
-            g.setColor(Color.LIGHT_GRAY);
-            g.fillRoundRect(manaBarXMargin , manaBarYMargin, manaBarWidth, manaBarHeight, 25, 25);
-            
-            g.setColor(Color.BLUE);
-            g.fillRoundRect(manaBarXMargin, manaBarYMargin, (int) (manaBarWidth * percentageOfManaRemaining), manaBarHeight, 25, 25);
-            
-            String mana = stats.getCurrentMana() + "/" + stats.getMaxMana();
-            g.setColor(Color.BLACK);
-            g.drawString(mana, manaBarWidth/2 + manaBarXMargin + g.getFontMetrics().stringWidth(mana ) /2, manaBarYMargin + g.getFontMetrics().getHeight());
-            
-
-        }
+    public void drawMana(Graphics g) {
+        int manaBarXMargin = (int) (width * 0.25);
+        int manaBarWidth = width - (manaBarXMargin * 2);
+        int manaBarYMargin = height - 135 + 25;
+        int manaBarHeight = 25;
+        
+        double percentageOfManaRemaining = (double) stats.getCurrentMana() / (double) stats.getMaxHealth();
+        
+        g.setColor(Color.LIGHT_GRAY);
+        g.fillRoundRect(manaBarXMargin , manaBarYMargin, manaBarWidth, manaBarHeight, 25, 25);
+        
+        g.setColor(Color.BLUE);
+        g.fillRoundRect(manaBarXMargin, manaBarYMargin, (int) (manaBarWidth * percentageOfManaRemaining), manaBarHeight, 25, 25);
+        
+        String mana = stats.getCurrentMana() + "/" + stats.getMaxMana();
+        g.setColor(Color.BLACK);
+        g.drawString(mana, manaBarWidth/2 + manaBarXMargin + g.getFontMetrics().stringWidth(mana ) /2, manaBarYMargin + g.getFontMetrics().getHeight());
     }
     
     /**

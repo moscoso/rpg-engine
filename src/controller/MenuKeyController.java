@@ -23,7 +23,7 @@ public class MenuKeyController implements KeyListener {
      * The menu that the controller mutates.
      *
      * @param m the menu object that the controller object uses.
-     * @param s the scene that the controller is active in
+     * @param s the scene that the controller should be activated in
      */
     public MenuKeyController(Menu m, Scene s) {
         menu = m;
@@ -60,14 +60,14 @@ public class MenuKeyController implements KeyListener {
         if (inputConfirm) {
             switch (menu.getCurrentSelection()) {
                 case NEW_GAME:
-                    Director.startNewGame();
+                    Director.goToGame();
                     break;
                 case RESUME_GAME:
                     Director.resumeGame();
                     menu.setCurrentSelection(0);
                     break;
                 case RETURN_TO_MAIN_MENU:
-                    Director.returnToMainMenu();
+                    Director.goToMainMenu();
                     break;
                 case EXIT:
                     System.exit(0);

@@ -1,8 +1,8 @@
 package model.game_object;
 
 import java.awt.Image;
-import java.awt.Point;
 import model.factory.SpriteFactory;
+import model.transform.Transform;
 
 /**
  * A GameObject is a container for a name, description, sprite, and location
@@ -13,29 +13,16 @@ public class GameObject {
     private final String description;
     private String spritePath = null;
 
-    private Point location;
+    private Transform transform = new Transform();
 
     public GameObject() {
         name = "Generic Object";
         description = "Generic description";
-        location = new Point(1, 1); // default constructor, (0 , 0)
     }
 
-    public GameObject(String objectName, String description, int ID) {
+    public GameObject(String objectName, String description) {
         this.name = objectName;
         this.description = description;
-        location = new Point(1, 1);
-    }
-
-    /*
-     * Get's the game objects current state. By default the return value is 0. 
-     * Each game object that actually has multiple states should override
-     * this method and use logic to return different states. The int return 
-     * value should be specified in a a public enum in that game object 
-     * called States
-     */
-    public int getState() {
-        return 0;
     }
 
     public String getDescription() {
@@ -47,22 +34,12 @@ public class GameObject {
     }
 
     /**
-     * Get the location of the GameObject.
+     * The Transform is used to store and manipulate the position, rotation and scale of the object
      *
-     * @return the location of the projectile as a point (unit is tiles)
+     * @return the Transform of the gameobject
      */
-    public Point getLocation() {
-        return location;
-    }
-
-    /**
-     * Sets the location of the GameObject on the map
-     *
-     * @param x the x coordinate of the location
-     * @param y the y coordinate of the location
-     */
-    public void setLocation(int x, int y) {
-        location = new Point(x, y);
+    public Transform getTransform() {
+        return transform;
     }
 
     public Image getSprite() {
@@ -74,6 +51,6 @@ public class GameObject {
     }
 
     public boolean collides(GameObject o) {
-        return this.getLocation().equals(o.getLocation());
+        return transform.getPosition().isEqualTo(o.transform.getPosition());
     }
 }

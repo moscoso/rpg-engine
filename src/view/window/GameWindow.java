@@ -26,8 +26,9 @@ import view.scene.Scene;
  */
 public class GameWindow {
 
-    private JFrame frame;
-    private ImagePanel panel;
+    private static GameWindow instance;
+    private static JFrame frame = new JFrame();
+    private static ImagePanel panel = new ImagePanel();
 
     //private final int OFFSET = 10; //The offset created by the window/menu bar
 
@@ -35,7 +36,7 @@ public class GameWindow {
      * Initializes the window with default size of 832 by 640 and adds a
      * {@link GamePanel}
      */
-    public GameWindow() {
+    private GameWindow() {
         this(1, 1);
         frame.setExtendedState(frame.getExtendedState() | JFrame.MAXIMIZED_BOTH);
     }
@@ -46,22 +47,28 @@ public class GameWindow {
      * @param width of the window in pixels
      * @param height of the window in pixels
      */
-    public GameWindow(int width, int height) {
-        frame = new JFrame();
+    private GameWindow(int width, int height) {
         frame.setSize(new Dimension(width, height));
-        frame.setTitle("FINAL BOSS 2.0 FAST TRACK");
+        frame.setTitle("RPG ENGINE");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //frame.setResizable(false);
         frame.setVisible(true);
         frame.setMinimumSize(new Dimension(400, 400));
         frame.addComponentListener(new GameWindowComponentListener());
         frame.addWindowListener(new GameWindowListener());
-
-
-        //Set up the panel for drawing
-        panel = new ImagePanel();
         frame.setContentPane(panel);
         frame.validate();
+    }
+
+    /**
+     * This is a singleton and restricts the instantiation of a class to one "single" instance
+     * @return the only instance of this class
+     */
+    public static GameWindow getInstance() {
+        if(instance == null) {
+            instance = new GameWindow();
+        }
+        return instance;
     }
     
     /**
@@ -69,7 +76,7 @@ public class GameWindow {
      *
      * @return the size of the window
      */
-    public Dimension getSize() {
+    public static Dimension getSize() {
         return frame.getSize();
     }
 
@@ -115,7 +122,7 @@ public class GameWindow {
      *
      * @author ChrisMoscoso
      */
-    private class ImagePanel extends JPanel {
+    private static class ImagePanel extends JPanel {
 
         private transient BufferedImage image;
 
@@ -177,7 +184,7 @@ public class GameWindow {
 
         @Override
         public void componentResized(ComponentEvent e) {
-            Scene.setSceneSize(GameWindow.this.frame.getSize());
+            Scene.setSceneSize(GameWindow.frame.getSize());
         }
 
         @Override

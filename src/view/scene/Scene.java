@@ -17,6 +17,8 @@ public class Scene {
     private ArrayList<ViewPort> viewports;
     private static Dimension size;
 
+    protected boolean active = false;
+
     public Scene() {
         this.viewports = new ArrayList<>();
     }
@@ -75,5 +77,4 @@ public class Scene {
     public static void setSceneSize(Dimension size) {
         Scene.size = size;
     }
-
 }

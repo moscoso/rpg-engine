@@ -1,7 +1,7 @@
-package model.map.tile;
+package model.tile;
 
 
-import static model.map.tile.Terrain.MotionType.ALL_PASS;
+import static model.tile.Terrain.MotionType.ALL_PASS;
 
 import model.game_object.GameObject;
 

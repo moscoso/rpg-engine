@@ -3,6 +3,8 @@ package model.engine;
 import java.util.Observable;
 
 import model.director.Director;
+import view.window.GameWindow;
+import java.awt.image.BufferedImage;
 
 
 /**
@@ -17,7 +19,8 @@ public class Engine extends Observable implements Runnable {
     private static Engine instance = new Engine();
     private Thread thread;
     private static int framesPerSecond = 30;
-    private static boolean shouldRun = true;
+    private static final boolean SHOULD_RUN_FOREVER = true;
+
 
     /**
      * This is a singleton and restricts the instantiation of a class to one "single" instance
@@ -36,7 +39,7 @@ public class Engine extends Observable implements Runnable {
      * @param FramesPerSecond is how fast the game engine should tick 
      */
     private Engine(int framesPerSecond) {
-        Engine.framesPerSecond = framesPerSecond;
+        setFPS(framesPerSecond);
         thread = new Thread(this);
         start();
     }
@@ -54,16 +57,15 @@ public class Engine extends Observable implements Runnable {
      */
     @Override
     public void run() {
-        while (shouldRun) {
+        while (SHOULD_RUN_FOREVER) {
             updateGame();
-            
-            renderGame();
+            drawGame();
             try {
                 Thread.sleep(33);
             } catch (InterruptedException ex) {
                 // LOGGER.log(Level.WARN, "Interrupted!", e);
-                // // Restore interrupted state...
-                // Thread.currentThread().interrupt();
+                // Restore interrupted state...
+                Thread.currentThread().interrupt();
             }
         }
     }
@@ -76,10 +78,18 @@ public class Engine extends Observable implements Runnable {
     }
     
     /**
-     * Render the game to the screen
+     * Draws the game to the screen via a double buffering technique.
+     * 
+     * First it renders the game to a bufferedImage. 
+     * Then, it takes the bufferedImage and paints it to the screen.
      */
-    private void renderGame(){
-        Director.getInstance().drawGame();
+    private void drawGame(){
+        BufferedImage gameImage = Director.getActiveScene().getImage();//render the game to buffer
+        GameWindow.getInstance().paintImageToScreen(gameImage); //paint the buffer to screen
+    }
+
+    public static void setFPS(int framesPerSecond) {
+        Engine.framesPerSecond = framesPerSecond;
     }
 
     public static int getFPS() {

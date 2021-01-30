@@ -15,19 +15,20 @@ import javax.imageio.ImageIO;
  */
 public class SpriteFactory {
     
-    public static final String PLAYER_NORTH = "src/resources/img/entity/summoner/north_idle.png";
-    public static final String PLAYER_EAST = "src/resources/img/entity/summoner/east_idle.png";
-    public static final String PLAYER_SOUTH = "src/resources/img/entity/summoner/south_idle.png";
-    public static final String PLAYER_WEST = "src/resources/img/entity/summoner/west_idle.png";
-    public static final String FIREBALL_NORTH = "src/resources/img/projectile/fireball_north.png";
-    public static final String FIREBALL_EAST = "src/resources/img/projectile/fireball_east.png";
-    public static final String FIREBALL_SOUTH = "src/resources/img/projectile/fireball_south.png";
-    public static final String FIREBALL_WEST = "src/resources/img/projectile/fireball_west.png";
-    public static final String RAT = "src/resources/img/entity/rat.png";
+    public static final String PLAYER_NORTH = "resources/img/entity/summoner/north_idle.png";
+    public static final String PLAYER_EAST = "resources/img/entity/summoner/east_idle.png";
+    public static final String PLAYER_SOUTH = "resources/img/entity/summoner/south_idle.png";
+    public static final String PLAYER_WEST = "resources/img/entity/summoner/west_idle.png";
+    public static final String FIREBALL_NORTH = "resources/img/projectile/fireball_north.png";
+    public static final String FIREBALL_EAST = "resources/img/projectile/fireball_east.png";
+    public static final String FIREBALL_SOUTH = "resources/img/projectile/fireball_south.png";
+    public static final String FIREBALL_WEST = "resources/img/projectile/fireball_west.png";
+    public static final String RAT = "resources/img/entity/rat.png";
     
     
     
-    public static int tileWidth = 64, tileHeight = 64;
+    public static int tileWidth = 64;
+    public static int tileHeight = 64;
     
     public static BufferedImage getGenericSprite(){
         BufferedImage i;

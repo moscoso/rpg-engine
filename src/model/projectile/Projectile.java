@@ -5,6 +5,7 @@ import model.entity.Avatar;
 import model.entity.Entity;
 import model.game_object.GameObject;
 import model.map.Direction;
+import model.vector.Vector2;
 import model.game_timer.GameTimer;
 import model.game_timer.GameTimerListener;
 
@@ -29,13 +30,17 @@ public class Projectile extends GameObject{
     }
 
     public Projectile(Entity owner) {
-        this.setLocation(owner.getLocation().x, owner.getLocation().y);
+        Vector2 position = this.getTransform().getPosition();
+        position.x = owner.getTransform().getPosition().x;
+        position.y = owner.getTransform().getPosition().y;
         this.myDirection = owner.getDirection();
         this.owner = owner;
     }
     
     public Projectile(int x, int y, Direction direction, int range, int speed, Entity owner) {
-        this.setLocation(x, y);
+        Vector2 position = this.getTransform().getPosition();
+        position.x = x;
+        position.y = y;
         myDirection = direction;
         this.range = range;
         this.speed = speed;
@@ -52,7 +57,9 @@ public class Projectile extends GameObject{
      */
     public void move() {
         if(canMove){
-            getLocation().translate(myDirection.dx, myDirection.dy);
+            Vector2 position = this.getTransform().getPosition();
+            position.x += myDirection.dx;
+            position.y += myDirection.dy;
             canMove = false;
             GameTimer x = new GameTimer(speed);
             x.setGameTimerListener(new GameTimerListener() {
@@ -65,13 +72,13 @@ public class Projectile extends GameObject{
             });
             x.start();
             distanceTraveled++;
-            if(endOfRangeReached()){
+            if(rangeLimitExceeded()){
                 this.disintegrate();
             }
         }
     }
     
-    public boolean endOfRangeReached(){
+    public boolean rangeLimitExceeded(){
         return distanceTraveled > range; 
     }
     
