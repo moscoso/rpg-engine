@@ -32,13 +32,11 @@ public class PauseMenuViewPort implements ViewPort, Observer {
     private int logoHeight;
     private int logoY = 100, logoX;
     //File image variables
-    private ImageIcon imageIcon;
-    BufferedImage fbLogo;
+    BufferedImage logo;
     
     public PauseMenuViewPort(){
-        imageIcon = new ImageIcon("src/resources/img/bg.gif");
         try {
-            fbLogo = ImageIO.read(new File("src/resources/img/FinalBoss.png"));          
+            logo = ImageIO.read(new File("src/resources/img/FinalBoss.png"));          
         } catch (IOException ex) {
             logoHeight = 0;
         }
@@ -55,9 +53,12 @@ public class PauseMenuViewPort implements ViewPort, Observer {
             g.setColor(new Color(255, 255, 255, 100));
             g.fillRect(0, 0, width, height);
             /*DRAW LOGO*/
-            logoX = width / 2 - fbLogo.getWidth() / 2;
-            logoHeight = fbLogo.getHeight();
-            g.drawImage(fbLogo, logoX, logoY, null);
+			if(logo != null){
+				logoX = width / 2 - logo.getWidth() / 2;
+				logoHeight = logo.getHeight();
+				g.drawImage(logo, logoX, logoY, null);
+			}
+            
 
             /*DRAW MENU*/
             g.setFont(new Font(g.getFont().getFamily(), Font.PLAIN, 30));
